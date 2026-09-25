@@ -1,0 +1,17 @@
+# Lõi
+requests>=2.31
+PyYAML>=6.0
+Pillow>=10.1
+imageio-ffmpeg>=0.5        # FFmpeg dự phòng nếu máy chưa cài
+
+# Lồng tiếng
+edge-tts>=6.1.10           # giọng Microsoft Edge (miễn phí, cần internet)
+
+# YouTube
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
+google-auth-httplib2>=0.1
+
+# Tuỳ chọn (bỏ dấu # để cài):
+# piper-tts>=1.2           # giọng đọc offline 100%
+# faster-whisper>=1.0      # căn phụ đề bằng nhận dạng giọng nói

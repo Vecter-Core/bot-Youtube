@@ -1,0 +1,133 @@
+# =====================================================================
+#  CẤU HÌNH AUTOTUBE — copy file này thành config.yaml rồi chỉnh sửa
+#  (lệnh: python -m autotube init  sẽ tự copy giúp bạn)
+# =====================================================================
+
+channel:
+  # Chủ đề/ngách của kênh — AI sẽ dựa vào đây để tự nghĩ ý tưởng
+  niche: "Khám phá khoa học và những sự thật thú vị"
+  language: "vi"                # vi, en, ...
+  audience: "Người Việt 18-35 tuổi, thích kiến thức ngắn gọn"
+  style: "Kể chuyện cuốn hút, câu ngắn, có câu hook ở 5 giây đầu"
+  # Dùng Google Trends để AI tham khảo xu hướng (cần internet)
+  use_trends: true
+  trends_geo: "VN"
+
+# ---------------------------------------------------------------------
+# AI LOCAL (LLM)
+#   provider: ollama        -> Ollama (https://ollama.com)  [khuyên dùng]
+#   provider: openai_compat -> LM Studio, llama.cpp server, vLLM, Jan, KoboldCpp...
+# ---------------------------------------------------------------------
+llm:
+  provider: "ollama"
+  base_url: "http://localhost:11434"       # LM Studio: http://localhost:1234/v1
+  model: "qwen2.5:7b"                      # model hỗ trợ tool-calling tốt: qwen2.5, llama3.1, mistral-nemo
+  api_key: ""                              # chỉ cần cho openai_compat nếu server yêu cầu
+  temperature: 0.8
+  num_ctx: 8192
+  timeout: 600
+  # Model có hỗ trợ "tool calling" gốc không. Nếu false, agent dùng giao thức JSON thay thế.
+  native_tools: true
+
+# ---------------------------------------------------------------------
+# AGENT — AI tự quyết định dùng công cụ nào
+# ---------------------------------------------------------------------
+agent:
+  max_steps: 40
+  # Sau khi agent dừng, tự làm nốt các bước còn thiếu (render, SEO, thumbnail, upload)
+  ensure_complete: true
+  # Cho phép agent tự đăng video lên YouTube
+  allow_upload: true
+
+# ---------------------------------------------------------------------
+# VIDEO
+# ---------------------------------------------------------------------
+video:
+  format: "landscape"        # landscape (16:9, 1920x1080) | shorts (9:16, 1080x1920) | square
+  fps: 30
+  target_duration: 60        # giây (gợi ý cho AI khi viết kịch bản)
+  transition: "fade"         # none | fade | wipeleft | slideleft | circleopen | dissolve | ...
+  transition_duration: 0.5
+  ken_burns: true            # hiệu ứng zoom chậm cho ảnh tĩnh
+  crf: 20                    # chất lượng x264 (thấp = đẹp hơn)
+  preset: "medium"
+  intro_title: true          # hiện tiêu đề ở cảnh đầu
+
+# ---------------------------------------------------------------------
+# LỒNG TIẾNG (TTS)
+#   edge   -> Microsoft Edge TTS (miễn phí, rất hay, cần internet)
+#   piper  -> Piper TTS (100% offline, tải bằng scripts/download_tools.py)
+#   dummy  -> không có giọng (chỉ để test)
+# ---------------------------------------------------------------------
+tts:
+  engine: "edge"
+  voice: "vi-VN-HoaiMyNeural"    # hoặc vi-VN-NamMinhNeural, en-US-AriaNeural...
+  rate: "+5%"
+  pitch: "+0Hz"
+  piper_model: "tools/piper/voices/vi_VN-vais1000-medium.onnx"
+  scene_padding: 0.25            # nghỉ giữa các cảnh (giây)
+
+# ---------------------------------------------------------------------
+# PHỤ ĐỀ
+# ---------------------------------------------------------------------
+subtitles:
+  enabled: true
+  burn_in: true                  # in cứng phụ đề lên video
+  upload_caption: true           # đồng thời upload file .srt lên YouTube
+  max_words_per_line: 7
+  font: "auto"                   # auto = tự tìm font hỗ trợ tiếng Việt, hoặc đường dẫn .ttf
+  font_size: 0                   # 0 = tự động theo độ phân giải
+  color: "#FFFFFF"
+  highlight_color: "#FFD400"
+  outline_color: "#000000"
+  position: "bottom"             # bottom | center
+  use_whisper: false             # dùng faster-whisper để căn thời gian (cần cài thêm)
+  whisper_model: "small"
+
+# ---------------------------------------------------------------------
+# HÌNH ẢNH / VIDEO NGUỒN
+# ---------------------------------------------------------------------
+media:
+  # Thứ tự ưu tiên nguồn hình ảnh cho từng cảnh
+  sources: ["local", "pexels", "pixabay", "sd", "placeholder"]
+  local_dir: "assets/media"       # thư mục video/ảnh của bạn (AI sẽ chọn theo tên file)
+  pexels_api_key: ""              # miễn phí: https://www.pexels.com/api/
+  pixabay_api_key: ""             # miễn phí: https://pixabay.com/api/docs/
+  prefer_video: true
+  # Stable Diffusion local (AUTOMATIC1111/Forge chạy với --api)
+  sd_url: "http://127.0.0.1:7860"
+
+# ---------------------------------------------------------------------
+# NHẠC NỀN
+# ---------------------------------------------------------------------
+music:
+  enabled: true
+  dir: "assets/music"            # bỏ nhạc .mp3 không bản quyền vào đây (đặt tên theo mood: calm_1.mp3, epic_2.mp3)
+  volume: 0.12
+  ducking: true                  # tự giảm nhạc khi có giọng đọc
+
+# ---------------------------------------------------------------------
+# YOUTUBE
+# ---------------------------------------------------------------------
+youtube:
+  client_secrets: "credentials/client_secret.json"
+  token_file: "credentials/token.json"
+  privacy: "private"             # private | unlisted | public
+  category_id: "27"              # 27=Education, 22=People&Blogs, 24=Entertainment, 28=Science&Tech
+  made_for_kids: false
+  # Khai báo "nội dung thay đổi/tổng hợp" (bắt buộc nếu video có người/sự kiện trông như thật do AI tạo)
+  contains_synthetic_media: false
+  default_language: "vi"
+  # Hẹn giờ công khai (ISO 8601, UTC). Để trống = không hẹn giờ
+  publish_at: ""
+
+# ---------------------------------------------------------------------
+# CHẠY TỰ ĐỘNG THEO LỊCH
+# ---------------------------------------------------------------------
+schedule:
+  videos_per_run: 1
+  interval_hours: 24
+
+paths:
+  output_dir: "output"
+  history_file: "output/history.json"
