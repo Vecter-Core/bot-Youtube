@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# cấu hình & bí mật của bạn
+config.yaml
+.env
+credentials/
+
+# dữ liệu sinh ra
+output/
+tools/
+
+# media cá nhân (giữ thư mục)
+assets/music/*
+!assets/music/README.md
+assets/media/*
+!assets/media/README.md
